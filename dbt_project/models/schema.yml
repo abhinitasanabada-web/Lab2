@@ -1,0 +1,30 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: RAW
+    database: USER_DB_CATFISH # <--- Ensure this matches your real DB name
+    tables:
+      - name: stock_prices
+
+models:
+  - name: stock_analytics
+    description: Transformed table with key technical indicators for BI.
+    columns:
+      - name: trade_date
+        tests:
+          - not_null
+          # Removed 'unique' test here because trade_date repeats for different symbols.
+          # Uniqueness is handled by the composite key in the model definition.
+
+      - name: symbol
+        tests:
+          - not_null
+
+      - name: ma_20
+        tests:
+          - not_null
+
+      - name: rsi_14
+        tests:
+          - not_null
