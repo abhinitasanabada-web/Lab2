@@ -1,0 +1,25 @@
+name: 'my_stock_project'
+version: '1.0.0'
+config-version: 2
+
+# CRITICAL: Matches the profile name in profiles.yml
+profile: 'dbt_elt_analytics'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  # CRITICAL: This key must match the 'name' defined at the top (my_stock_project)
+  my_stock_project:
+    # Config for models inside 'models/analytics/'
+    analytics:
+      +materialized: table      # Creates physical tables (STOCK_ANALYTICS)
+      +enabled: true
