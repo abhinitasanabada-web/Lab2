@@ -1,0 +1,20 @@
+# dbt_project/profiles.yml
+dbt_elt_analytics: # Replace this name if your dbt project name differs
+  target: dev
+  outputs:
+    # This 'dev' target MUST match DBT_TARGET_ENV = "dev" in your DAG
+    dev:
+      type: snowflake
+      threads: 4
+      
+      # Use environment variables set by the Airflow DAG
+      account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('DBT_SNOWFLAKE_USER') }}"
+      password: "{{ env_var('DBT_SNOWFLAKE_PASSWORD') }}"
+      role: "{{ env_var('DBT_SNOWFLAKE_ROLE') }}"
+      warehouse: "{{ env_var('DBT_SNOWFLAKE_WAREHOUSE') }}"
+      database: "{{ env_var('DBT_SNOWFLAKE_DATABASE') }}"
+      # dbt will create/write models into this schema (e.g., ANALYTICS)
+      schema: ANALYTICS 
+      
+      client_session_keep_alive: False

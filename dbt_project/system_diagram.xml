@@ -1,0 +1,92 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" version="29.1.0">
+  <diagram id="lab2_architecture" name="Lab 2 Architecture">
+    <mxGraphModel dx="946" dy="644" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" parent="1" style="swimlane;startSize=20;horizontal=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Orchestration Layer (Airflow)" vertex="1">
+          <mxGeometry height="300" width="800" x="20" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="11" parent="2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;b&gt;DAG 1: yfinance_etl&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 10px&quot;&gt;Tasks: Fetch Prices, Load (MERGE)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="70" width="140" x="80" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="12" parent="2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="&lt;b&gt;DAG 2: dbt_elt_analytics&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 10px&quot;&gt;Tasks: Export Vars, dbt run, dbt test&lt;/span&gt;" vertex="1">
+          <mxGeometry height="70" width="160" x="350" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="13" parent="2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;b&gt;DAG 3: ml_forecast_tf&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 10px&quot;&gt;Tasks: Train, Forecast, Build Union&lt;/span&gt;" vertex="1">
+          <mxGeometry height="70" width="150" x="610" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="14" parent="2" style="shape=rect;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;b&gt;Airflow Connections&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 10px&quot;&gt;(&quot;snowflake_catfish&quot;)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="100" x="380" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="3" parent="1" style="swimlane;startSize=20;horizontal=0;fillColor=#d5e8d4;strokeColor=#82b366;" value="Data Warehouse (Snowflake)" vertex="1">
+          <mxGeometry height="200" width="800" x="20" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="7" parent="3" style="shape=cylinder;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;gradientColor=none;" value="&lt;b&gt;RAW&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 10px&quot;&gt;STOCK_PRICES&lt;/span&gt;" vertex="1">
+          <mxGeometry height="80" width="80" x="100" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="8" parent="3" style="shape=cylinder;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;gradientColor=none;" value="&lt;b&gt;ANALYTICS&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 10px&quot;&gt;STOCK_ANALYTICS&lt;br&gt;FINAL_PRICES_FORECAST&lt;/span&gt;" vertex="1">
+          <mxGeometry height="80" width="100" x="380" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="9" parent="3" style="shape=cylinder;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;gradientColor=none;" value="&lt;b&gt;MODEL&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 10px&quot;&gt;FORECASTS&lt;/span&gt;" vertex="1">
+          <mxGeometry height="80" width="80" x="630" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="10" parent="3" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;" value="&lt;b&gt;SNOWFLAKE&lt;/b&gt;" vertex="1">
+          <mxGeometry height="20" width="100" x="370" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="4" parent="1" style="swimlane;startSize=20;horizontal=0;fillColor=#fff2cc;strokeColor=#d6b656;" value="Consumption Layer" vertex="1">
+          <mxGeometry height="150" width="800" x="20" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="15" parent="4" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fillColor=#f0f8ff;strokeColor=#333333;" value="&lt;b&gt;BI Tool&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;font-size: 10px&quot;&gt;(Superset)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="380" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="5" parent="1" style="swimlane;startSize=20;horizontal=0;fillColor=#f8cecc;strokeColor=#b85450;" value="Data Source" vertex="1">
+          <mxGeometry height="100" width="800" x="20" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="6" parent="5" style="shape=cloud;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="YFinance API" vertex="1">
+          <mxGeometry height="60" width="120" x="80" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="16" edge="1" parent="1" source="6" style="edgeStyle=orthogonalEdgeStyle;html=1;fontColor=#000000;" target="11" value="Raw Data (OHLCV)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="17" edge="1" parent="1" source="11" style="edgeStyle=orthogonalEdgeStyle;html=1;fontColor=#000000;" target="7" value="Load (Idempotent MERGE)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="18" edge="1" parent="1" source="7" style="edgeStyle=orthogonalEdgeStyle;html=1;fontColor=#000000;" target="12" value="Read (SELECT *)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="19" edge="1" parent="1" source="12" style="edgeStyle=orthogonalEdgeStyle;html=1;fontColor=#000000;" target="8" value="dbt Run (ELT/Transform)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="20" edge="1" parent="1" source="8" style="edgeStyle=orthogonalEdgeStyle;html=1;fontColor=#000000;" target="13" value="Read/Write">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="21" edge="1" parent="1" source="8" style="edgeStyle=orthogonalEdgeStyle;html=1;fontColor=#000000;" target="15" value="Consumption">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="22" edge="1" parent="1" source="13" style="edgeStyle=orthogonalEdgeStyle;html=1;fontColor=#000000;" target="9" value="Forecast Output">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="23" edge="1" parent="1" source="11" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;endArrow=block;endFill=0;strokeColor=#008000;" target="12" value="&lt;b&gt;Trigger&lt;/b&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="24" edge="1" parent="1" source="12" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;endArrow=block;endFill=0;strokeColor=#008000;" target="13" value="&lt;b&gt;Trigger&lt;/b&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="25" edge="1" parent="1" source="14" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;strokeWidth=2;strokeColor=#FF0000;" target="12" value="&lt;b&gt;Secure Credentials Fetch&lt;/b&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxCell id="26" value="" x="430" y="190" />
+              <mxCell id="27" value="" x="430" y="120" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="28" parent="25" style="edgeLabel;html=1;align=left;verticalAlign=middle;resizable=0;points=[];" value="Injected as &lt;b&gt;DBT_SNOWFLAKE_...&lt;/b&gt; Environment Variables" vertex="1">
+          <mxGeometry relative="1" x="0.0571" y="2" as="geometry">
+            <mxPoint x="-114" y="2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
