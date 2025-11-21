@@ -1,0 +1,50 @@
+# 📈 End-to-End Stock Analytics Pipeline (ETL/ELT)
+
+This project implements a robust, automated data pipeline to analyze stock market trends (AAPL, MSFT, TSLA) using a modern data stack. It orchestrates the flow of data from raw ingestion to machine learning forecasts and final business intelligence visualization.
+
+## 🛠️ Tech Stack
+* **Orchestration:** Apache Airflow (running in Docker)
+* **Data Warehouse:** Snowflake (RAW, ANALYTICS, MODEL schemas)
+* **Transformation:** dbt Core (Data Build Tool)
+* **Ingestion:** Python (YFinance API)
+* **Visualization:** Apache Superset / Preset
+* **Language:** Python, SQL, Jinja
+
+## 🏗️ System Architecture
+The pipeline consists of three sequential Airflow DAGs:
+
+1.  **ETL (Ingestion):** * Fetches OHLCV data from YFinance.
+    * Loads data into Snowflake `RAW.STOCK_PRICES`.
+    * **Key Feature:** Uses SQL `MERGE` to ensure idempotency (prevents duplicate data on re-runs).
+
+2.  **ELT (Transformation):**
+    * Triggered automatically after ETL.
+    * Uses **dbt** to transform raw data into `ANALYTICS.STOCK_ANALYTICS`.
+    * Calculates Technical Indicators: **20-Day Moving Average (MA_20)** and **RSI (Relative Strength Index)**.
+    * **Security:** Credentials are securely fetched from Airflow Connections and injected into dbt via Environment Variables (no hardcoded secrets).
+    * **Quality:** Automated `dbt test` ensures data integrity (Not Null, Unique constraints).
+
+3.  **ML Forecasting:**
+    * Triggered automatically after dbt tests pass.
+    * Uses Snowflake ML to predict future stock prices based on historical trends.
+
+## 📊 Dashboard
+The final data is visualized in Preset/Superset, featuring:
+* **Price Trends:** Line chart comparing Daily Close vs. 20-Day Moving Average.
+* **Momentum:** Area chart tracking RSI levels to identify Overbought (>70) / Oversold (<30) conditions.
+* **Interactivity:** Filters for Stock Symbol and Date Range.
+
+## 📂 Project Structure
+```text
+├── dags/
+│   ├── dag_yfinance_etl.py    # Ingestion DAG
+│   ├── dag_dbt_elt.py         # Transformation DAG (dbt wrapper)
+│   └── dag_ml_forecast.py     # Machine Learning DAG
+├── dbt_project/               # dbt Transformation Logic
+│   ├── models/
+│   │   └── analytics/
+│   │       └── stock_analytics.sql
+│   ├── dbt_project.yml
+│   └── profiles.yml
+├── docker-compose.yaml        # Container configuration
+└── requirements.txt           # Python dependencies
