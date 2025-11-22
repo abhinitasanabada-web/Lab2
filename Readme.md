@@ -34,6 +34,14 @@ The final data is visualized in Preset/Superset, featuring:
 * **Momentum:** Area chart tracking RSI levels to identify Overbought (>70) / Oversold (<30) conditions.
 * **Interactivity:** Filters for Stock Symbol and Date Range.
 
+## system Diagram:
+
+<img width="1384" height="1326" alt="image" src="https://github.com/user-attachments/assets/5dd1e20b-c12f-43e9-8bdd-9914b58af4d1" />
+
+## Work Flow
+<img width="1122" height="1576" alt="image" src="https://github.com/user-attachments/assets/e2034ce8-a2f1-4280-98ba-3136596fd72d" />
+
+
 ## 📂 Project Structure
 ```text
 ├── dags/
@@ -50,5 +58,7 @@ The final data is visualized in Preset/Superset, featuring:
 └── requirements.txt           # Python dependencies
 
 
-system Diagram:
+
+
+
 
