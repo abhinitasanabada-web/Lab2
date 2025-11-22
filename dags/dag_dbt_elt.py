@@ -56,6 +56,15 @@ with DAG(
         # We install into the venv, isolated from Airflow
         {DBT_VENV_PATH}/bin/pip install --no-cache-dir dbt-snowflake==1.7.2 dbt-core==1.7.13
         """,
+    
+    )
+    # ... inside the DAG context ...
+
+    # NEW TASK: Run dbt Snapshot
+    dbt_snapshot = BashOperator(
+        task_id="dbt_snapshot_raw",
+        bash_command=f"{DBT_BIN} snapshot --project-dir {DBT_PROJECT_DIR} --profiles-dir {DBT_PROJECT_DIR} --target {DBT_TARGET_ENV}",
+        env=dbt_vars,
     )
 
     # 2. Run dbt using the venv executable
@@ -82,4 +91,4 @@ with DAG(
     )
     
     # Wiring
-    dbt_vars >> install_dbt >> dbt_run >> dbt_test >> trigger_ml
+    dbt_vars >> install_dbt >> dbt_snapshot >> dbt_run >> dbt_test >> trigger_ml
