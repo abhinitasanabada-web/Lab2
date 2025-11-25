@@ -9,7 +9,7 @@ from typing import List
 
 import pandas as pd
 import yfinance as yf
-import snowflake.connector # Still needed for type hinting/optional custom use
+import snowflake.connector 
 
 from airflow import DAG
 from airflow.models import Variable
@@ -28,7 +28,6 @@ hook = SnowflakeHook(snowflake_conn_id=SNOWFLAKE_CONN_ID)
 def _fetch_prices(symbols: List[str], start_date: str, end_date: str) -> pd.DataFrame:
     """
     Fetch OHLCV with yfinance and return long-form DataFrame.
-    (This is the previously incomplete function, now fully defined.)
     """
     if not symbols:
         return pd.DataFrame(
@@ -40,7 +39,7 @@ def _fetch_prices(symbols: List[str], start_date: str, end_date: str) -> pd.Data
         tickers=" ".join(symbols),
         start=start_date,
         end=end_date,
-        auto_adjust=False,   # keep Close and Adj Close distinct
+        auto_adjust=False,   
         group_by="ticker",
         progress=False,
         threads=True,
@@ -103,7 +102,6 @@ def _fetch_prices(symbols: List[str], start_date: str, end_date: str) -> pd.Data
 
     df = pd.concat(rows, ignore_index=True)
 
-    
     df["SYMBOL"] = df["SYMBOL"].astype(str).str.upper().str.strip()
     for col in ["OPEN", "HIGH", "LOW", "CLOSE", "ADJ_CLOSE"]:
         df[col] = pd.to_numeric(df[col], errors="coerce")
@@ -115,12 +113,12 @@ def _fetch_prices(symbols: List[str], start_date: str, end_date: str) -> pd.Data
     logging.info("Fetch summary: %d rows for symbols=%s", len(df), symbols)
     return df[["TRADE_DATE", "SYMBOL", "OPEN", "HIGH", "LOW", "CLOSE", "ADJ_CLOSE", "VOLUME"]]
 
+
 @task
 def ensure_objects(**context):
     """Ensure RAW schema/table exist."""
     schema = Variable.get("target_schema_raw", default_var="RAW")
     
-
     with hook.get_conn() as conn, conn.cursor() as cur:
         try:
             conn.autocommit(False) # Start transaction
@@ -141,12 +139,12 @@ def ensure_objects(**context):
             """)
             conn.commit()
         except Exception as e:
-            # FIX: Ensure error propagation (Lab 1 Fix)
             try: conn.rollback()
             except Exception: pass
             raise e
             
     return f'Ensured "{schema}".STOCK_PRICES exists'
+
 
 @task
 def fetch_and_load_prices(**context):
@@ -158,6 +156,7 @@ def fetch_and_load_prices(**context):
             raise ValueError
     except Exception:
         symbols = [s.strip() for s in symbols_var.split(",") if s.strip()]
+        
     lookback_days = int(Variable.get("lookback_days", default_var="365"))
     schema = Variable.get("target_schema_raw", default_var="RAW")
 
@@ -183,8 +182,10 @@ def fetch_and_load_prices(**context):
         try:
             conn.autocommit(False) 
             
+            # 1. Create Temp Table
             cur.execute(f"CREATE TEMPORARY TABLE {tmp_table} LIKE {target};")
 
+            # 2. Insert into Temp Table
             insert_sql = f"""
                 INSERT INTO {tmp_table}
                 (TRADE_DATE, SYMBOL, OPEN, HIGH, LOW, CLOSE, ADJ_CLOSE, VOLUME)
@@ -192,7 +193,7 @@ def fetch_and_load_prices(**context):
             """
             cur.executemany(insert_sql, rows)
 
-        
+            # 3. Merge Temp into Target (The Key Requirement)
             cur.execute(f"""
                 MERGE INTO {target} t
                 USING {tmp_table} s
@@ -213,12 +214,10 @@ def fetch_and_load_prices(**context):
             total = cur.fetchone()[0]
             return f"Loaded {len(rows)} rows. Total rows now in {schema}.STOCK_PRICES = {total}"
         except Exception as e:
-            # FIX: Ensure error propagation (Lab 1 Fix)
             try: conn.rollback()
             except Exception: pass
             raise e
         finally:
-            # Drop temp table regardless of success
             try:
                 hook.run(f"DROP TABLE IF EXISTS {tmp_table}")
             except Exception:
@@ -236,11 +235,11 @@ with DAG(
     t1 = ensure_objects()
     t2 = fetch_and_load_prices()
     
-    # Trigger the dbt ELT DAG )
     t3_trigger_dbt = TriggerDagRunOperator(
         task_id="trigger_dbt_analytics_dag",
-        trigger_dag_id="dbt_elt_analytics", # Assumes your dbt DAG is named this
+        trigger_dag_id="dbt_elt_analytics",
         execution_date="{{ ds }}",
+        reset_dag_run=True,
     )
     
     t1 >> t2 >> t3_trigger_dbt
