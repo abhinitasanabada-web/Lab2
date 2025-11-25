@@ -9,7 +9,7 @@ from typing import List
 
 import pandas as pd
 import yfinance as yf
-import snowflake.connector 
+import snowflake.connector # Still needed for type hinting/optional custom use
 
 from airflow import DAG
 from airflow.models import Variable
@@ -39,7 +39,7 @@ def _fetch_prices(symbols: List[str], start_date: str, end_date: str) -> pd.Data
         tickers=" ".join(symbols),
         start=start_date,
         end=end_date,
-        auto_adjust=False,   
+        auto_adjust=False,   # keep Close and Adj Close distinct
         group_by="ticker",
         progress=False,
         threads=True,
